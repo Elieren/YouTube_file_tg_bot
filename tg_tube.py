@@ -104,10 +104,11 @@ try:
     @bot.callback_query_handler(func = lambda call: True)
     def answer(call):
         """Обработка нажатия кнопки и запуск соответствующей функции"""
-        if call.data[:5] == 'Видео':
-            video(call.message, call.data[6:])
-        elif call.data[:5] == 'Аудио':
-            audio(call.message, call.data[6:])
+        result = call.data.split()
+        if result[0] == 'Видео':
+            video(call.message, result[1])
+        elif result[0] == 'Аудио':
+            audio(call.message, result[1])
 
     # Запускаем телеграм-бота
     print('SERVER START')
