@@ -8,6 +8,7 @@ import time
 import sys
 import io
 from dotenv.main import load_dotenv
+import datetime
 
 try:
     load_dotenv()
@@ -15,6 +16,10 @@ try:
     id_telegram = os.environ['ID_TELEGRAM']
     
     id_telegram = id_telegram.split(', ')
+
+    def log(text):
+        with open("log", "a") as f:
+            f.write(str(datetime.datetime.now())+ "\t\t" + text + " " +"\n")
 
     def video(message, url):
         """Скачивание видео и отправка пользователю"""
@@ -40,6 +45,7 @@ try:
 
             except:
                 pass
+        log(f"Video sent --> {message.chat.id} {url}")
             
     def audio(message, url):
         """Скачивание аудио и отправка пользователю"""
@@ -65,19 +71,22 @@ try:
             
             except:
                 pass
+        log(f"Audio sent --> {message.chat.id} {url}")
 
     bot = telebot.TeleBot(token)
 
-    def notuser(message):
+    def notuser(message, status):
         """Отправка сообщения о запрете"""
         bot.send_message(message.chat.id, 'Здравствуйте.\nИспользование бота для вашего профиля запрещено.')
+        log(f"{status} --> {message.chat.id} not authorized ")
 
     @bot.message_handler(commands=["start"])
     def start(message, res=False):
         if str(message.chat.id) in id_telegram:
             bot.send_message(message.chat.id, 'Здравствуйте.\nОтправьте мне ссылку и я пришлю вам видео или аудио файл.')
+            log(f"Start --> {message.chat.id} authorized ")
         else:
-            notuser(message)
+            notuser(message, "Start")
         print(f'New message received from user {message.chat.id}')
 
     @bot.message_handler(content_types=["text"])
@@ -87,6 +96,7 @@ try:
             if str(message.chat.id) in id_telegram:
                 print(f'New url received from user {message.chat.id} (authorized)')
                 url = message.text.strip() # Получаем ссылку из сообщения пользователя
+                log(f"Text --> {message.chat.id} {url}")
                 markup = telebot.types.InlineKeyboardMarkup()
                 button1 = telebot.types.InlineKeyboardButton("Видео", callback_data=f'Видео {url}')
                 button2 = telebot.types.InlineKeyboardButton("Аудио", callback_data=f'Аудио {url}')
@@ -94,11 +104,12 @@ try:
                 bot.send_message(message.chat.id, "Что скачать:", reply_markup=markup)
             else:
                 print(f'New url received from user {message.chat.id} (not authorized)')
-                notuser(message)
+                notuser(message, "Text")
         
         except Exception as e:
             """Отправляем сообщение об ошибке пользователю"""
             bot.send_message(message.chat.id, "Ошибка: " + str(e))
+            log(f"Error --> {str(e)}")
         
 
     @bot.callback_query_handler(func = lambda call: True)
@@ -117,4 +128,5 @@ try:
 except:
     # При ошибку полностью перезапускаем программу
     print("SERVER ERROR --- SERVER RESTART")
+    log("Critical error (restart)")
     os.execv(sys.executable, ['python3'] + sys.argv)
