@@ -1,3 +1,4 @@
 telebot
 pytube
 python-dotenv
+pydub
