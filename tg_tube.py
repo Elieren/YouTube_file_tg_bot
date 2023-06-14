@@ -9,6 +9,8 @@ import sys
 import io
 from dotenv.main import load_dotenv
 import datetime
+from pydub import AudioSegment
+from pydub.utils import mediainfo
 
 try:
     load_dotenv()
@@ -54,16 +56,25 @@ try:
             try:
                 # Загружаем аудио с YouTube
                 yt = YouTube(url)
+                video_id = yt.video_id
+                title = yt.title
+                url = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
+                r = requests.get(url)
+                data = r.content
+
                 audio_buffer = io.BytesIO()
                 stream = yt.streams.get_audio_only()
                 stream.stream_to_buffer(audio_buffer)
-                audio_data = audio_buffer.getbuffer()
-                audio_buffer.flush()
-                
+                audio_data = audio_buffer.getvalue()
+
+                sound = AudioSegment.from_file(io.BytesIO(audio_data), format="mp4")
+                audio_convert = io.BytesIO()
+                sound.export(audio_convert, format="mp3")
+                audio_convert = audio_convert.getvalue()
                 # Отправляем файл пользователю
                 while True:
                     try:
-                        bot.send_audio(message.chat.id, audio_data)
+                        bot.send_audio(message.chat.id, audio=audio_convert, title=title, thumb=data)
                         break
                     except:
                         pass
@@ -128,5 +139,5 @@ try:
 except:
     # При ошибку полностью перезапускаем программу
     print("SERVER ERROR --- SERVER RESTART")
-    log("Critical error (restart)")
+    #log("Critical error (restart)")
     os.execv(sys.executable, ['python3'] + sys.argv)
