@@ -2,3 +2,5 @@ telebot
 pytube
 python-dotenv
 pydub
+ffmpeg-downloader
+python-ffmpeg
