@@ -44,10 +44,11 @@ async def video(message, url):
                 break
             except:
                 pass
+            
+        await log(f"Video sent --> {message.chat.id} {url}")
     except:
+        await log(f"Error download video --> {message.chat.id} {url}")
         await bot.send_message(message.chat.id, 'Error: Данное видео нельзя скачать')
-
-    await log(f"Video sent --> {message.chat.id} {url}")
         
 async def audio(message, url):
     """Скачивание аудио и отправка пользователю"""
@@ -79,10 +80,11 @@ async def audio(message, url):
                 break
             except:
                 pass
-    except:
-        await bot.send_message(message.chat.id, 'Error: Данное аудио нельзя скачать')
 
-    await log(f"Audio sent --> {message.chat.id} {url}")
+        await log(f"Audio sent --> {message.chat.id} {url}")
+    except:
+        await log(f"Error download audio --> {message.chat.id} {url}")
+        await bot.send_message(message.chat.id, 'Error: Данное аудио нельзя скачать')
 
 bot = AsyncTeleBot(token)
 
