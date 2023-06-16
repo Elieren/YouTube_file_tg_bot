@@ -4,3 +4,4 @@ python-dotenv
 pydub
 ffmpeg-downloader
 python-ffmpeg
+aiohttp
