@@ -36,11 +36,8 @@ async def video(message, url):
         # Отправляем файл пользователю
         while True:
             try:
-                await bot.send_video(
-                    message.chat.id,
-                    video_data,
-                    supports_streaming=True
-                    )
+                await bot.send_video(message.chat.id,
+                                     video_data, supports_streaming=True)
                 break
             except Exception:
                 pass
@@ -48,10 +45,8 @@ async def video(message, url):
         await log(f"Video sent --> {message.chat.id} {url}")
     except Exception as e:
         await log(f"Error download video --> {message.chat.id} {url} {e}")
-        await bot.send_message(
-            message.chat.id,
-            'Error: Данное видео нельзя скачать'
-            )
+        await bot.send_message(message.chat.id,
+                               'Error: Данное видео нельзя скачать')
 
 
 async def audio(message, url):
@@ -80,12 +75,8 @@ async def audio(message, url):
         # Отправляем файл пользователю
         while True:
             try:
-                await bot.send_audio(
-                    message.chat.id,
-                    audio=audio_convert,
-                    title=title,
-                    thumb=data
-                    )
+                await bot.send_audio(message.chat.id, audio=audio_convert,
+                                     title=title, thumb=data)
                 break
             except Exception:
                 pass
@@ -93,31 +84,26 @@ async def audio(message, url):
         await log(f"Audio sent --> {message.chat.id} {url}")
     except Exception as e:
         await log(f"Error download audio --> {message.chat.id} {url} {e}")
-        await bot.send_message(
-            message.chat.id,
-            'Error: Данное аудио нельзя скачать'
-            )
+        await bot.send_message(message.chat.id,
+                               'Error: Данное аудио нельзя скачать')
 
 bot = AsyncTeleBot(token)
 
 
 async def notuser(message, status):
     """Отправка сообщения о запрете"""
-    await bot.send_message(
-        message.chat.id,
-        'Здравствуйте.\nИспользование бота для вашего профиля запрещено.'
-        )
+    await bot.send_message(message.chat.id,
+                           'Здравствуйте.\nИспользование бота \
+                            для вашего профиля запрещено.')
     await log(f"{status} --> {message.chat.id} not authorized ")
 
 
 @bot.message_handler(commands=["start"])
 async def start(message, res=False):
     if str(message.chat.id) in id_telegram:
-        await bot.send_message(
-            message.chat.id,
-            'Здравствуйте.\nОтправьте мне ссылку и \
-                я пришлю вам видео или аудио файл.'
-            )
+        await bot.send_message(message.chat.id,
+                               'Здравствуйте.\nОтправьте мне ссылку и \
+                                я пришлю вам видео или аудио файл.')
         await log(f"Start --> {message.chat.id} authorized ")
     else:
         await notuser(message, "Start")
@@ -143,11 +129,8 @@ async def handle_message(message):
                 callback_data=f'Аудио {url}'
                 )
             markup.add(button1, button2)  # Добавляем кнопки в объект markup
-            await bot.send_message(
-                message.chat.id,
-                "Что скачать:",
-                reply_markup=markup
-                )
+            await bot.send_message(message.chat.id,
+                                   "Что скачать:", reply_markup=markup)
         else:
             print(f'New url received from user \
                 {message.chat.id} (not authorized)')
