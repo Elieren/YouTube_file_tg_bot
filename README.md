@@ -15,7 +15,7 @@ ID_TELEGRAM = Enter the ID of users who are given access to use the bot (example
 python3 install -r requirements.txt
 ```
 ```
-python3 tg_tube.py
+python3 main.py
 ```
 
 ### Docker build
