@@ -92,18 +92,19 @@ bot = AsyncTeleBot(token)
 
 async def notuser(message, status):
     """Отправка сообщения о запрете"""
-    await bot.send_message(message.chat.id,
-                           'Здравствуйте.\nИспользование бота \
-                            для вашего профиля запрещено.')
+    await bot.send_message(
+        message.chat.id,
+        'Здравствуйте.\nИспользование бота для вашего профиля запрещено.')
     await log(f"{status} --> {message.chat.id} not authorized ")
 
 
 @bot.message_handler(commands=["start"])
 async def start(message, res=False):
     if str(message.chat.id) in id_telegram:
-        await bot.send_message(message.chat.id,
-                               'Здравствуйте.\nОтправьте мне ссылку и \
-                                я пришлю вам видео или аудио файл.')
+        await bot.send_message(
+            message.chat.id,
+            'Здравствуйте.\nОтправьте мне ссылку \
+и я пришлю вам видео или аудио файл.')
         await log(f"Start --> {message.chat.id} authorized ")
     else:
         await notuser(message, "Start")
@@ -118,16 +119,12 @@ async def handle_message(message):
             print(f'New url received from user {message.chat.id} (authorized)')
             # Получаем ссылку из сообщения пользователя
             url = message.text.strip()
-            log(f"Text --> {message.chat.id} {url}")
+            await log(f"Text --> {message.chat.id} {url}")
             markup = telebot.types.InlineKeyboardMarkup()
             button1 = telebot.types.InlineKeyboardButton(
-                "Видео",
-                callback_data=f'Видео {url}'
-                )
+                "Видео", callback_data=f'Видео {url}')
             button2 = telebot.types.InlineKeyboardButton(
-                "Аудио",
-                callback_data=f'Аудио {url}'
-                )
+                "Аудио", callback_data=f'Аудио {url}')
             markup.add(button1, button2)  # Добавляем кнопки в объект markup
             await bot.send_message(message.chat.id,
                                    "Что скачать:", reply_markup=markup)
