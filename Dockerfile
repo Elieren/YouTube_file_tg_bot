@@ -15,4 +15,4 @@ RUN apt-get install -y ffmpeg
 RUN pip install -r requirements.txt
 RUN ffdl install --add-path
 
-CMD ['python3', 'main.py']
+CMD python3 main.py
