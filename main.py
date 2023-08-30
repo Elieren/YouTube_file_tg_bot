@@ -26,11 +26,24 @@ async def preview(message, url):
 
     yt = YouTube(url)
     video_id = yt.video_id
-    url_im = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
-    r = requests.get(url_im)
-    data = r.content
+    try:
+        url_im = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
+        r = requests.get(url_im)
+        data = r.content
+        await log(f"Preview download --> {message.chat.id} {url}")
 
-    await bot.send_photo(message.chat.id, data)
+        try:
+            await bot.send_photo(message.chat.id, data)
+            await log(f"Preview sent --> {message.chat.id} {url}")
+        except Exception as e:
+            await log(f"Error send preview --> {message.chat.id} {url} {e}")
+            await bot.send_message(
+                message.chat.id,
+                'Error: Данное превью неполучается отправить')
+    except Exception as e:
+        await log(f"Error download preview --> {message.chat.id} {url} {e}")
+        await bot.send_message(message.chat.id,
+                               'Error: Данное превью нельзя скачать')
 
 
 async def video(message, url):
@@ -40,21 +53,27 @@ async def video(message, url):
     # Загружаем видео с YouTube
     yt = YouTube(url)
     video_buffer = io.BytesIO()
-    stream = yt.streams.get_highest_resolution()
     try:
-        stream.stream_to_buffer(video_buffer)
-        video_data = video_buffer.getbuffer()
+        stream = yt.streams.get_highest_resolution()
+        await log(f"Video download --> {message.chat.id} {url}")
+        try:
+            stream.stream_to_buffer(video_buffer)
+            video_data = video_buffer.getbuffer()
 
-        # Отправляем файл пользователю
-        while True:
-            try:
-                await bot.send_video(message.chat.id,
-                                     video_data, supports_streaming=True)
-                break
-            except Exception:
-                pass
+            # Отправляем файл пользователю
+            while True:
+                try:
+                    await bot.send_video(message.chat.id,
+                                         video_data, supports_streaming=True)
+                    break
+                except Exception:
+                    pass
 
-        await log(f"Video sent --> {message.chat.id} {url}")
+            await log(f"Video sent --> {message.chat.id} {url}")
+        except Exception as e:
+            await log(f"Error send video --> {message.chat.id} {url} {e}")
+            await bot.send_message(message.chat.id,
+                                   'Error: Данное видео нельзя отправить')
     except Exception as e:
         await log(f"Error download video --> {message.chat.id} {url} {e}")
         await bot.send_message(message.chat.id,
@@ -69,33 +88,51 @@ async def audio(message, url):
     yt = YouTube(url)
     video_id = yt.video_id
     title = yt.title
-    url_im = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
-    r = requests.get(url_im)
-    data = r.content
-
-    audio_buffer = io.BytesIO()
-    stream = yt.streams.get_audio_only()
     try:
-        stream.stream_to_buffer(audio_buffer)
-        audio_data = audio_buffer.getvalue()
+        url_im = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
+        r = requests.get(url_im)
+        data = r.content
+        await log(f"Audio preview download --> {message.chat.id} {url}")
 
-        sound = AudioSegment.from_file(io.BytesIO(audio_data), format="mp4")
-        audio_convert = io.BytesIO()
-        sound.export(audio_convert, format="mp3")
-        audio_convert = audio_convert.getvalue()
-        audio_buffer.close()
-        # Отправляем файл пользователю
-        while True:
+        try:
+            audio_buffer = io.BytesIO()
+            stream = yt.streams.get_audio_only()
+
             try:
-                await bot.send_audio(message.chat.id, audio=audio_convert,
-                                     title=title, thumb=data)
-                break
-            except Exception:
-                pass
+                stream.stream_to_buffer(audio_buffer)
+                audio_data = audio_buffer.getvalue()
 
-        await log(f"Audio sent --> {message.chat.id} {url}")
+                sound = AudioSegment.from_file(io.BytesIO(audio_data),
+                                               format="mp4")
+                audio_convert = io.BytesIO()
+                sound.export(audio_convert, format="mp3")
+                audio_convert = audio_convert.getvalue()
+                audio_buffer.close()
+                # Отправляем файл пользователю
+                while True:
+                    try:
+                        await bot.send_audio(message.chat.id,
+                                             audio=audio_convert,
+                                             title=title, thumb=data)
+                        break
+                    except Exception:
+                        pass
+
+                await log(f"Audio sent --> {message.chat.id} {url}")
+            except Exception as e:
+                await log(
+                    f"Error send audio --> {message.chat.id} {url} {e}")
+                await bot.send_message(message.chat.id,
+                                       'Error: Данное аудио нельзя отправить')
+
+        except Exception as e:
+            await log(f"Error download audio --> {message.chat.id} {url} {e}")
+            await bot.send_message(message.chat.id,
+                                   'Error: Данное аудио нельзя скачать')
+
     except Exception as e:
-        await log(f"Error download audio --> {message.chat.id} {url} {e}")
+        await log(
+            f"Error download preview audio --> {message.chat.id} {url} {e}")
         await bot.send_message(message.chat.id,
                                'Error: Данное аудио нельзя скачать')
 
@@ -116,7 +153,7 @@ async def start(message, res=False):
         await bot.send_message(
             message.chat.id,
             'Здравствуйте.\nОтправьте мне ссылку \
-и я пришлю вам видео или аудио файл.')
+и я пришлю вам видео, аудио или превью.')
         await log(f"Start --> {message.chat.id} authorized ")
     else:
         await notuser(message, "Start")
