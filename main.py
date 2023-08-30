@@ -21,6 +21,18 @@ async def log(text):
         f.write(str(datetime.datetime.now()) + "\t\t" + text + " " + "\n")
 
 
+async def preview(message, url):
+    await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
+
+    yt = YouTube(url)
+    video_id = yt.video_id
+    url_im = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
+    r = requests.get(url_im)
+    data = r.content
+
+    await bot.send_photo(message.chat.id, data)
+
+
 async def video(message, url):
     """Скачивание видео и отправка пользователю"""
     await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
@@ -125,7 +137,10 @@ async def handle_message(message):
                 "Видео", callback_data=f'Видео {url}')
             button2 = telebot.types.InlineKeyboardButton(
                 "Аудио", callback_data=f'Аудио {url}')
-            markup.add(button1, button2)  # Добавляем кнопки в объект markup
+            button3 = telebot.types.InlineKeyboardButton(
+                "Превью", callback_data=f'Превью {url}')
+            # Добавляем кнопки в объект markup
+            markup.add(button1, button2, button3)
             await bot.send_message(message.chat.id,
                                    "Что скачать:", reply_markup=markup)
         else:
@@ -147,6 +162,8 @@ async def answer(call):
         await video(call.message, result[1])
     elif result[0] == 'Аудио':
         await audio(call.message, result[1])
+    elif result[0] == 'Превью':
+        await preview(call.message, result[1])
 
 
 # Запускаем телеграм-бота
