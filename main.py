@@ -24,11 +24,8 @@ async def log(text):
 async def preview(message, url):
     await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
 
-    url = f'https://youtu.be/{url}'
-    yt = YouTube(url)
-    video_id = yt.video_id
     try:
-        url_im = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
+        url_im = f'https://i.ytimg.com/vi/{url}/maxresdefault.jpg'
         r = requests.get(url_im)
         data = r.content
         await log(f"Preview download --> {message.chat.id} {url}")
