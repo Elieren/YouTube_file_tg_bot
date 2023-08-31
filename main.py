@@ -24,6 +24,7 @@ async def log(text):
 async def preview(message, url):
     await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
 
+    url = f'https://youtu.be/{url}'
     yt = YouTube(url)
     video_id = yt.video_id
     try:
@@ -51,6 +52,7 @@ async def video(message, url):
     await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
 
     # Загружаем видео с YouTube
+    url = f'https://youtu.be/{url}'
     yt = YouTube(url)
     video_buffer = io.BytesIO()
     try:
@@ -85,6 +87,7 @@ async def audio(message, url):
     await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
 
     # Загружаем аудио с YouTube
+    url = f'https://youtu.be/{url}'
     yt = YouTube(url)
     video_id = yt.video_id
     title = yt.title
@@ -168,6 +171,8 @@ async def handle_message(message):
             print(f'New url received from user {message.chat.id} (authorized)')
             # Получаем ссылку из сообщения пользователя
             url = message.text.strip()
+            yt = YouTube(url)
+            url = yt.video_id
             await log(f"Text --> {message.chat.id} {url}")
             markup = telebot.types.InlineKeyboardMarkup()
             button1 = telebot.types.InlineKeyboardButton(
