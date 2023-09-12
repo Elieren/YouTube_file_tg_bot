@@ -60,13 +60,11 @@ async def video(message, url):
             video_data = video_buffer.getbuffer()
 
             # Отправляем файл пользователю
-            while True:
-                try:
-                    await bot.send_video(message.chat.id,
-                                         video_data, supports_streaming=True)
-                    break
-                except Exception:
-                    pass
+            try:
+                await bot.send_video(message.chat.id,
+                                     video_data, supports_streaming=True)
+            except Exception as e:
+                await bot.send_message(message.chat.id, e)
 
             await log(f"Video sent --> {message.chat.id} {url}")
         except Exception as e:
@@ -109,14 +107,12 @@ async def audio(message, url):
                 audio_convert = audio_convert.getvalue()
                 audio_buffer.close()
                 # Отправляем файл пользователю
-                while True:
-                    try:
-                        await bot.send_audio(message.chat.id,
-                                             audio=audio_convert,
-                                             title=title, thumb=data)
-                        break
-                    except Exception:
-                        pass
+                try:
+                    await bot.send_audio(message.chat.id,
+                                         audio=audio_convert,
+                                         title=title, thumb=data)
+                except Exception as e:
+                    await bot.send_message(message.chat.id, e)
 
                 await log(f"Audio sent --> {message.chat.id} {url}")
             except Exception as e:
