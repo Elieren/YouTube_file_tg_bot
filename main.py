@@ -64,7 +64,16 @@ async def video(message, url):
                 await bot.send_video(message.chat.id,
                                      video_data, supports_streaming=True)
             except Exception as e:
-                await bot.send_message(message.chat.id, e)
+                if e.description == 'Request Entity Too Large':
+                    await bot.send_message(
+                        message.chat.id,
+                        'Это видео слишком большое для отправки.')
+                    download_url = yt.streams.get_highest_resolution().url
+                    await bot.send_message(
+                        message.chat.id,
+                        f'Ссылка для скачивания видео {download_url}')
+                else:
+                    await bot.send_message(message.chat.id, e)
 
             await log(f"Video sent --> {message.chat.id} {url}")
         except Exception as e:
