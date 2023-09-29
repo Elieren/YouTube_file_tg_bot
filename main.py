@@ -119,15 +119,24 @@ async def audio(message, url):
                 sound.export(audio_convert, format="mp3")
                 audio_convert = audio_convert.getvalue()
                 audio_buffer.close()
-                # Отправляем файл пользователю
-                try:
-                    await bot.send_audio(message.chat.id,
-                                         audio=audio_convert,
-                                         title=title, thumb=data)
-                except Exception as e:
-                    await bot.send_message(message.chat.id, e)
 
-                await log(f"Audio sent --> {message.chat.id} {url}")
+                size = (len(audio_convert) / (1024 * 1024))
+
+                if size <= 50.0:
+                    # Отправляем файл пользователю
+                    try:
+                        await bot.send_audio(message.chat.id,
+                                             audio=audio_convert,
+                                             title=title, thumb=data)
+                    except Exception as e:
+                        await bot.send_message(message.chat.id, e)
+
+                    await log(f"Audio sent --> {message.chat.id} {url}")
+                else:
+                    await bot.send_message(
+                        message.chat.id,
+                        'Данное аудио слишком большое для отправки.')
+
             except Exception as e:
                 await log(
                     f"Error send audio --> {message.chat.id} {url} {e}")
