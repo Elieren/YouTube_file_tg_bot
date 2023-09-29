@@ -1,7 +1,5 @@
 ## YouTube-File
 
-In the file.txt file, you need to write the id of telegram users to whom it is destroyed to use the bot.
-
 ### .env.example setup
 ```
 TOKEN = Enter the TOKEN of the telegram bot
