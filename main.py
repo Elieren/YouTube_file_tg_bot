@@ -11,9 +11,6 @@ from telebot.async_telebot import AsyncTeleBot
 
 load_dotenv()
 token = os.environ['TOKEN']
-id_telegram = os.environ['ID_TELEGRAM']
-
-id_telegram = id_telegram.split(', ')
 
 
 async def log(text):
@@ -157,53 +154,36 @@ async def audio(message, url):
 bot = AsyncTeleBot(token)
 
 
-async def notuser(message, status):
-    """Отправка сообщения о запрете"""
-    await bot.send_message(
-        message.chat.id,
-        'Здравствуйте.\nИспользование бота для вашего профиля запрещено.')
-    await log(f"{status} --> {message.chat.id} not authorized ")
-
-
 @bot.message_handler(commands=["start"])
 async def start(message, res=False):
-    if str(message.chat.id) in id_telegram:
-        await bot.send_message(
-            message.chat.id,
-            'Здравствуйте.\nОтправьте мне ссылку \
+    await bot.send_message(
+        message.chat.id,
+        'Здравствуйте.\nОтправьте мне ссылку \
 и я пришлю вам видео, аудио или превью.')
-        await log(f"Start --> {message.chat.id} authorized ")
-    else:
-        await notuser(message, "Start")
-    print(f'New message received from user {message.chat.id}')
+    await log(f"Start --> {message.chat.id} authorized ")
 
 
 @bot.message_handler(content_types=["text"])
 async def handle_message(message):
     """Обрабатываем сообщения от пользователей"""
     try:
-        if str(message.chat.id) in id_telegram:
-            print(f'New url received from user {message.chat.id} (authorized)')
-            # Получаем ссылку из сообщения пользователя
-            url = message.text.strip()
-            yt = YouTube(url)
-            url = yt.video_id
-            await log(f"Text --> {message.chat.id} {url}")
-            markup = telebot.types.InlineKeyboardMarkup()
-            button1 = telebot.types.InlineKeyboardButton(
-                "Видео", callback_data=f'Видео {url}')
-            button2 = telebot.types.InlineKeyboardButton(
-                "Аудио", callback_data=f'Аудио {url}')
-            button3 = telebot.types.InlineKeyboardButton(
-                "Превью", callback_data=f'Превью {url}')
-            # Добавляем кнопки в объект markup
-            markup.add(button1, button2, button3)
-            await bot.send_message(message.chat.id,
-                                   "Что скачать:", reply_markup=markup)
-        else:
-            print(f'New url received from user \
-                {message.chat.id} (not authorized)')
-            await notuser(message, "Text")
+        print(f'New url received from user {message.chat.id} (authorized)')
+        # Получаем ссылку из сообщения пользователя
+        url = message.text.strip()
+        yt = YouTube(url)
+        url = yt.video_id
+        await log(f"Text --> {message.chat.id} {url}")
+        markup = telebot.types.InlineKeyboardMarkup()
+        button1 = telebot.types.InlineKeyboardButton(
+            "Видео", callback_data=f'Видео {url}')
+        button2 = telebot.types.InlineKeyboardButton(
+            "Аудио", callback_data=f'Аудио {url}')
+        button3 = telebot.types.InlineKeyboardButton(
+            "Превью", callback_data=f'Превью {url}')
+        # Добавляем кнопки в объект markup
+        markup.add(button1, button2, button3)
+        await bot.send_message(message.chat.id,
+                               "Что скачать:", reply_markup=markup)
 
     except Exception as e:
         """Отправляем сообщение об ошибке пользователю"""
