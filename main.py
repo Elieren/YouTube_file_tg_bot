@@ -96,6 +96,7 @@ async def audio(message, url):
     yt = YouTube(url)
     video_id = yt.video_id
     title = yt.title
+    author = yt.author
     try:
         url_im = f'https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg'
         r = requests.get(url_im)
@@ -124,7 +125,8 @@ async def audio(message, url):
                     try:
                         await bot.send_audio(message.chat.id,
                                              audio=audio_convert,
-                                             title=title, thumb=data)
+                                             title=title, thumb=data,
+                                             performer=author)
                     except Exception as e:
                         await bot.send_message(message.chat.id, e)
 
