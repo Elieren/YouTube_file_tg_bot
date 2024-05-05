@@ -13,6 +13,6 @@ RUN apt-get dist-upgrade
 RUN apt-get install -y ffmpeg
 
 RUN pip install -r requirements.txt
-RUN ffdl install --add-path
+# RUN ffdl install --add-path
 
 CMD python3 main.py
