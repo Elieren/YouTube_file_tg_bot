@@ -47,7 +47,7 @@ pipeline {
         stage('Deploy New Container') {
             steps {
                 echo "# Запускаем новый контейнер"
-                sh "docker run -d --restart unless-stopped --network host --name youtube-file-async -e USER=$USER -e PASSWORD=$PASSWORD -e HOST=$HOST -e KEY=$KEY -e URL_HOST=$URL_HOST -e ACCESS_KEY=$ACCESS_KEY -e SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY -e BUCKET=$BUCKET -e SERVER_AWS_URL=$SERVER_AWS_URL ${env.NEW_IMAGE_NAME}"
+                sh "docker run -d --restart unless-stopped --name youtube-file-async -e TOKEN=$TOKEN ${env.NEW_IMAGE_NAME}"
             }
         }
     }
