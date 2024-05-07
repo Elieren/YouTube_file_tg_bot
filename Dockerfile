@@ -15,4 +15,8 @@ RUN apt-get install -y ffmpeg
 RUN pip install -r requirements.txt
 # RUN ffdl install --add-path
 
+# Замените строку в файле
+RUN sed -i 's/var_regex = re.compile(r"^\\w+\\W")/var_regex = re.compile(r"^\\$*\\w+\\W")/g' /usr/local/lib/python3.11/site-packages/pytube/cipher.py
+
+
 CMD python3 main.py
