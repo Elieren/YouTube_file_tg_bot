@@ -1,7 +1,7 @@
 import os
 import requests
 import telebot
-from pytube import YouTube
+from pytubefix import YouTube
 import io
 from dotenv.main import load_dotenv
 import datetime
