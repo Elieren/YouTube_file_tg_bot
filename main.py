@@ -46,7 +46,7 @@ async def video(message, url):
     await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
 
     # Загружаем видео с YouTube
-    url = f'https://youtu.be/{url}'
+    url = f'https://www.youtube.com/watch?v={url}'
     yt = YouTube(url)
     video_buffer = io.BytesIO()
     try:
@@ -92,7 +92,7 @@ async def audio(message, url):
     await bot.send_message(message.chat.id, 'Пожалуйста подождите...')
 
     # Загружаем аудио с YouTube
-    url = f'https://youtu.be/{url}'
+    url = f'https://www.youtube.com/watch?v={url}'
     yt = YouTube(url)
     video_id = yt.video_id
     title = yt.title
