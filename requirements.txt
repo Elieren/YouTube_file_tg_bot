@@ -9,7 +9,7 @@ decorator
 ffmpeg
 ffmpeg-python
 frozenlist
-futur
+future
 idna
 imageio
 imageio-ffmpeg
