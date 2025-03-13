@@ -1,4 +1,4 @@
-FROM python
+FROM python:3.10.16
 
 WORKDIR /Youtube
 COPY . /Youtube
@@ -12,9 +12,9 @@ RUN apt-get -y upgrade
 # RUN apt-get dist-upgrade
 RUN apt-get install -y ffmpeg
 
-RUN pip install --upgrade pip
+#RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN pip install audioop-lts
+#RUN pip install audioop-lts
 # RUN ffdl install --add-path
 
 # Замените строку в файле
