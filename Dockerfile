@@ -14,6 +14,7 @@ RUN apt-get install -y ffmpeg
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN pip install audioop-lts
 # RUN ffdl install --add-path
 
 # Замените строку в файле
