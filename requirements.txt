@@ -8,7 +8,7 @@ colorama
 decorator
 ffmpeg
 ffmpeg-python
-frozenlist0
+frozenlist
 futur
 idna
 imageio
